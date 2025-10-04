@@ -41,7 +41,7 @@ class TicketDetailView(generics.RetrieveUpdateAPIView):
 
     def patch(self, request, *args, **kwargs):
         instance = self.get_object()
-         client_version = int(request.data.get('version', 0))
+        client_version = int(request.data.get('version', 0))
         if client_version != instance.version:
             return Response({"error": {"code": "STALE_UPDATE", "message": "Version mismatch"}}, status=409)
         instance.version += 1
