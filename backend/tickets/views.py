@@ -22,7 +22,7 @@ class TicketListView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         queryset = Ticket.objects.all()
-         search = self.request.query_params.get('search')
+        search = self.request.query_params.get('search')
         if search:
             queryset = queryset.filter(
                 Q(title__icontains=search) |
