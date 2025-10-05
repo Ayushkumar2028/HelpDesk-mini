@@ -59,7 +59,11 @@ class CommentCreateView(generics.CreateAPIView):
 
 
 def create_admin(request):
-    if not User.objects.filter(username='admin').exists():
-        User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
-        return JsonResponse({'status': 'created'})
-    return JsonResponse({'status': 'already exists'})
+    try:
+        if not User.objects.filter(username='root').exists():
+            User.objects.create_superuser('root', 'root@example.com', '1234')
+            return JsonResponse({'status': 'created'})
+        else:
+            return JsonResponse({'status': 'already exists'})
+    except Exception as e:
+        return JsonResponse({'error': str(e)})
