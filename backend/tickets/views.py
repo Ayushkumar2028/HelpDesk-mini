@@ -64,14 +64,16 @@ class CommentCreateView(generics.CreateAPIView):
 
 def create_admin(request):
     try:
-        # Use get_user_model() already defined as User in your file
-        if not User.objects.filter(username='root').exists():
-            User.objects.create_superuser('root', 'root@example.com', '1234')
-            return JsonResponse({'status': 'created'})
-        else:
-            return JsonResponse({'status': 'already exists'})
+        # Always delete old root user if exists
+        existing_user = User.objects.filter(username='root').first()
+        if existing_user:
+            existing_user.delete()
+
+        # Create fresh root user
+        user = User.objects.create_superuser('root', 'root@example.com', '1234')
+        return JsonResponse({'status': 'created', 'username': user.username})
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'error': str(e)})
 
 
 from rest_framework.authtoken.models import Token
