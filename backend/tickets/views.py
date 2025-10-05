@@ -60,8 +60,8 @@ class CommentCreateView(generics.CreateAPIView):
         ticket_id = self.kwargs.get('ticket_id') or self.kwargs.get('pk')
         ticket = get_object_or_404(Ticket, pk=ticket_id)
         serializer.save(author=self.request.user, ticket=ticket)
-
-
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt
 def create_admin(request):
     try:
         # Always delete old root user if exists
