@@ -5,6 +5,7 @@ from .models import Ticket, Comment
 from .serializers import TicketSerializer, CommentSerializer
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.http import JsonResponse   
 
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -56,8 +57,8 @@ class CommentCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        ticket_id = self.kwargs['pk']
-        ticket = Ticket.objects.get(pk=ticket_id)
+        ticket_id = self.kwargs.get('ticket_id') or self.kwargs.get('pk')
+        ticket = get_object_or_404(Ticket, pk=ticket_id)
         serializer.save(author=self.request.user, ticket=ticket)
 
 
@@ -70,7 +71,6 @@ def create_admin(request):
         else:
             return JsonResponse({'status': 'already exists'})
     except Exception as e:
-        # Return error string so we can see in logs / postman
         return JsonResponse({'error': str(e)}, status=500)
 
 
