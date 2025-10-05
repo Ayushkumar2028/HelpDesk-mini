@@ -6,6 +6,9 @@ from .serializers import TicketSerializer, CommentSerializer
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
 # Create Ticket
 class TicketCreateView(generics.CreateAPIView):
     serializer_class = TicketSerializer
@@ -67,3 +70,18 @@ def create_admin(request):
             return JsonResponse({'status': 'already exists'})
     except Exception as e:
         return JsonResponse({'error': str(e)})
+
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate
+from rest_framework.views import APIView
+# ✅ Custom token view compatible with custom User model
+class CustomAuthToken(APIView):
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(username=username, password=password)
+        if not user:
+            return Response({'error': 'Invalid credentials'}, status=400)
+
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key})
