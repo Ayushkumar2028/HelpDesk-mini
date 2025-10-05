@@ -63,13 +63,16 @@ class CommentCreateView(generics.CreateAPIView):
 
 def create_admin(request):
     try:
+        # Use get_user_model() already defined as User in your file
         if not User.objects.filter(username='root').exists():
             User.objects.create_superuser('root', 'root@example.com', '1234')
             return JsonResponse({'status': 'created'})
         else:
             return JsonResponse({'status': 'already exists'})
     except Exception as e:
-        return JsonResponse({'error': str(e)})
+        # Return error string so we can see in logs / postman
+        return JsonResponse({'error': str(e)}, status=500)
+
 
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
@@ -85,3 +88,26 @@ class CustomAuthToken(APIView):
 
         token, _ = Token.objects.get_or_create(user=user)
         return Response({'token': token.key})
+
+def perform_create(self, serializer):
+    # support both 'ticket_id' (your urls.py) and 'pk' (common pattern)
+    ticket_id = self.kwargs.get('ticket_id') or self.kwargs.get('pk')
+    ticket = get_object_or_404(Ticket, pk=ticket_id)
+    serializer.save(author=self.request.user, ticket=ticket)
+
+from django.apps import AppConfig
+
+class TicketsConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'tickets'
+
+    def ready(self):
+        # auto-create a superuser if not present. Wrapped in try/except to avoid breaking migrations
+        try:
+            from django.contrib.auth import get_user_model
+            User = get_user_model()
+            if not User.objects.filter(username='root').exists():
+                User.objects.create_superuser('root', 'root@example.com', '1234')
+        except Exception:
+            # Swallow exceptions so migrations/startup don't fail; check logs for details.
+            pass

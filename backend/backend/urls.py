@@ -22,5 +22,5 @@ from tickets.views import CustomAuthToken
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('tickets.urls')),
-     path('api/token/', CustomAuthToken.as_view(), name='api_token_auth'),
+    path('api/token/', CustomAuthToken.as_view(), name='api_token_auth'),
 ]

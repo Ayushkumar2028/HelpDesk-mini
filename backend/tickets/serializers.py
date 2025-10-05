@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
-    # ticket = serializers.PrimaryKeyRelatedField(read_only=True)
+    ticket = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Comment
         fields = ['id', 'ticket', 'author', 'content', 'created_at']
