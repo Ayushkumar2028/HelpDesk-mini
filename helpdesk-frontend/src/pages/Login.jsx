@@ -30,14 +30,14 @@ export default function Login() {
       <form onSubmit={submit} className="space-y-3">
         <input
           className="w-full border p-2 rounded"
-          placeholder="username"
+          placeholder="username-root"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
         <input
           type="password"
           className="w-full border p-2 rounded"
-          placeholder="password"
+          placeholder="password-1234"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
