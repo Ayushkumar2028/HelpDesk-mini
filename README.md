@@ -8,7 +8,7 @@ This project allows users to create, view, and manage support tickets with comme
 ## 🌐 Live Demo
 
 * **Frontend:** [https://help-desk-mini-ysto.vercel.app/](https://help-desk-mini-ysto.vercel.app/)
-* **Backend API:** [https://helpdesk-mini-4.onrender.com](https://helpdesk-mini-4.onrender.com)
+* **Backend API:** [https://helpdesk-mini-4.onrender.com/api/create-admin/](https://helpdesk-mini-4.onrender.com/api/create-admin/)
 
 ---
 
