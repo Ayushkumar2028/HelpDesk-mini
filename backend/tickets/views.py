@@ -64,7 +64,6 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def create_admin(request):
     try:
-        # Always delete old root user if exists
         existing_user = User.objects.filter(username='root').first()
         if existing_user:
             existing_user.delete()
@@ -79,15 +78,13 @@ def create_admin(request):
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
-# ✅ Custom token view compatible with custom User model
 class CustomAuthToken(APIView):
     """
     A hardened login endpoint that manually verifies username/password
     and returns a token.
-    Works even when Django's authenticate() fails due to backend issues.
     """
-    authentication_classes = []  # disable auth requirement
-    permission_classes = []      # open to all
+    authentication_classes = []  
+    permission_classes = []      
 
     def post(self, request, *args, **kwargs):
         username = request.data.get('username')
@@ -109,7 +106,6 @@ class CustomAuthToken(APIView):
             return JsonResponse({'error': str(e)}, status=500)
 
 def perform_create(self, serializer):
-    # support both 'ticket_id' (your urls.py) and 'pk' (common pattern)
     ticket_id = self.kwargs.get('ticket_id') or self.kwargs.get('pk')
     ticket = get_object_or_404(Ticket, pk=ticket_id)
     serializer.save(author=self.request.user, ticket=ticket)
@@ -121,12 +117,10 @@ class TicketsConfig(AppConfig):
     name = 'tickets'
 
     def ready(self):
-        # auto-create a superuser if not present. Wrapped in try/except to avoid breaking migrations
         try:
             from django.contrib.auth import get_user_model
             User = get_user_model()
             if not User.objects.filter(username='root').exists():
                 User.objects.create_superuser('root', 'root@example.com', '1234')
         except Exception:
-            # Swallow exceptions so migrations/startup don't fail; check logs for details.
             pass
